@@ -1,0 +1,4 @@
+certifi==2017.4.17
+future==0.16.0
+python-telegram-bot==6.1.0
+uuid==1.30
