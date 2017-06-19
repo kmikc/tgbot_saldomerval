@@ -15,18 +15,21 @@ import sqlite3 as lite
 
 def get_cardnumber(p_chat_id):
     # COUNT
-    query = "SELECT COUNT(*) FROM saldomerval WHERE chatid={CHATID};".format(CHATID=p_chat_id)
     conn = lite.connect('saldomerval.db')
+    query = "SELECT COUNT(*) FROM saldomerval WHERE chatid={CHATID};".format(CHATID=p_chat_id)
     cur = conn.cursor()
     cur.execute(query)
     res_count = cur.fetchone()[0]
     conn.commit()
 
-    if res_count = 0:
-        # INSERT
+    if res_count == 0:
+        res_cardnumber = -1
     else:
-        # SELECT
-
+        query = "SELECT cardnumber FROM saldomerval WHERE chatid={CHATID};".format(CHATID=p_chat_id)
+        cur = conn.cursor()
+        cur.execute(query)
+        res_cardnumber = cur.fetchone()[0]
+        conn.commit()
 
     conn.close()
 
@@ -45,23 +48,36 @@ def saldo(bot, update):
     print p_chat_id
     int_cardnumber = get_cardnumber(p_chat_id)
 
-    r = requests.post("https://www.metro-valparaiso.cl/saldonuevo.php", data={'numerotarjeta': int_cardnumber})
+    print int_cardnumber
 
-    #r.text
-    responsetext = r.text
-    print responsetext
-    return_text = responsetext
+    if int_cardnumber > -1:
+        # CONSULTAR
 
-    #HTMLParser
-    html_parser = HTMLParser.HTMLParser()
-    responsetext_unescaped = html_parser.unescape(responsetext)
-    print responsetext_unescaped
-    return_text = responsetext_unescaped
+        print 'Consultar...'
 
-    #BeautifulSoup
-    responsetext_unescaped_beautiful = unicode(BeautifulSoup(responsetext_unescaped, convertEntities=BeautifulStoneSoup.ALL_ENTITIES).text)
-    print responsetext_unescaped_beautiful
-    return_text = responsetext_unescaped_beautiful
+        r = requests.post("https://www.metro-valparaiso.cl/saldonuevo.php", data={'numerotarjeta': '%s'% int_cardnumber})
+
+        #r.text
+        responsetext = r.text
+        print responsetext
+        return_text = responsetext
+
+        #HTMLParser
+        html_parser = HTMLParser.HTMLParser()
+        responsetext_unescaped = html_parser.unescape(responsetext)
+        print responsetext_unescaped
+        return_text = responsetext_unescaped
+
+        #BeautifulSoup
+        responsetext_unescaped_beautiful = unicode(BeautifulSoup(responsetext_unescaped, convertEntities=BeautifulStoneSoup.ALL_ENTITIES).text)
+        print responsetext_unescaped_beautiful
+        return_text = responsetext_unescaped_beautiful
+
+    else:
+        # NO HAY NUMERO DE TARJETA
+
+        print 'No hay numero'
+        return_text = 'No hay número de tarjeta configurado. Ingrésalo con /numerotarjeta <numero>'
 
     bot.sendMessage(chat_id=update.message.chat.id, text=return_text)
 
