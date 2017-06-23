@@ -55,7 +55,7 @@ def saldo(bot, update):
 
         print 'Consultar...'
 
-        r = requests.post("https://www.metro-valparaiso.cl/saldonuevo.php", data={'numerotarjeta': '%s'% int_cardnumber})
+        r = requests.post("https://www.metro-valparaiso.cl/saldonuevo.php", data={'numerotarjeta': 36108253014267396})
 
         #r.text
         responsetext = r.text
