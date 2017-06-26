@@ -5,7 +5,13 @@ from telegram.ext import Updater, CommandHandler, Job
 from datetime import datetime, timedelta
 from time import mktime
 import sqlite3 as lite
+import datetime
+import requests
+import logging
+import HTMLParser
+from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
 
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 #
 #
@@ -43,7 +49,9 @@ def get_cardnumber(p_chat_id):
 #
 
 def saldo(bot, update):
+    print '---------------'
     print 'saldo'
+    print datetime.datetime.now()
     p_chat_id = update.message.chat.id
     print p_chat_id
     int_cardnumber = get_cardnumber(p_chat_id)
@@ -55,7 +63,7 @@ def saldo(bot, update):
 
         print 'Consultar...'
 
-        r = requests.post("https://www.metro-valparaiso.cl/saldonuevo.php", data={'numerotarjeta': 36108253014267396})
+        r = requests.post("https://www.metro-valparaiso.cl/saldonuevo.php", data={"numerotarjeta": int_cardnumber})
 
         #r.text
         responsetext = r.text
