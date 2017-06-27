@@ -70,8 +70,7 @@ def saldo(bot, update):
         if len(lSaldo) > 0:
             return_text = "Tu saldo disponible es: " + lSaldo[0]
 
-        if len(lOperaciones) > 0:
-
+        #if len(lOperaciones) > 0:
 
         return_text = return_text + lMensaje[0]
 
