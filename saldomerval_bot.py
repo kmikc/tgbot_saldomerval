@@ -10,6 +10,7 @@ import requests
 import logging
 import HTMLParser
 from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
+import uuid
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
@@ -90,8 +91,51 @@ def saldo(bot, update):
     bot.sendMessage(chat_id=update.message.chat.id, text=return_text)
 
 
-def numerotarjeta(bot, update):
+def numerotarjeta(bot, update, args):
     print 'numerotarjeta'
+    str_result = 'args: {}'.format(args[0])
+    try:
+        p_numerotarjeta = int(args[0])
+        ok = True
+        p_username = str(update.message.chat.username)
+
+    except:
+        str_result = "Valor no numérico"
+        ok = False
+
+    if ok:
+        conn = None
+        try:
+            conn = lite.connect('saldomerval.db')
+            cur = conn.cursor()
+
+            # Cuenta registros existentes
+            cur.execute("SELECT COUNT(*) FROM saldomerval WHERE chatid=:CHATID", {"CHATID": update.message.chat.id})
+            row_count = cur.fetchone()[0]
+
+            print row_count
+
+            # Segun resultado obtenido, actualiza o inserta
+            if row_count > 0:
+                print 'UPDATE'
+                cur.execute("UPDATE saldomerval SET cardnumber=?, username=? WHERE chatid=?", (p_numerotarjeta, p_username, update.message.chat.id))
+                conn.commit()
+                str_result = 'Se ha actualizado el número de la tarjeta'
+            else:
+                print 'INSERT'
+                p_uniqid = str(uuid.uuid4())
+                cur.execute("INSERT INTO saldomerval (uniqid, chatid, cardnumber, username) VALUES (?, ?, ?, ?)", (p_uniqid, update.message.chat.id, p_numerotarjeta, p_username))
+                conn.commit()
+                str_result = 'Se ha ingresado tu número de tarjeta'
+
+        except:
+            str_result = 'No se pudo conectar'
+
+        finally:
+            if conn:
+                conn.close()
+
+    bot.sendMessage(chat_id=update.message.chat.id, text=str_result)
 
 
 #
