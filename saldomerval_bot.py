@@ -8,12 +8,14 @@ import sqlite3 as lite
 import datetime
 import requests
 import logging
-#import HTMLParser
-#from BeautifulSoup import BeautifulSoup, BeautifulStoneSoup
 import uuid
 from lxml import html
+import peewee
+from models import saldomerval
+
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
 
 #
 #
@@ -123,12 +125,23 @@ def numerotarjeta(bot, update, args):
     bot.sendMessage(chat_id=update.message.chat.id, text=str_result)
 
 
+#
+#
+# INFO: Muestra info, por ahora solo pruebas con peewee
+#
+#
+
+def info(bot, update):
+    print "Info"
+    reg = saldomerval.get(saldomerval.chatid==37307558).get()
+    print reg.username
+
 # TOKEN
 token = open('TOKEN').read().rstrip('\n')
 updater = Updater(token)
 
 # COMANDOS
-#updater.dispatcher.add_handler(CommandHandler('info', info))
+updater.dispatcher.add_handler(CommandHandler('info', info))
 #updater.dispatcher.add_handler(CommandHandler('help', help))
 updater.dispatcher.add_handler(CommandHandler('numerotarjeta', numerotarjeta, pass_args=True))
 updater.dispatcher.add_handler(CommandHandler('saldo', saldo))
