@@ -132,9 +132,9 @@ def numerotarjeta(bot, update, args):
 #
 
 def info(bot, update):
-    print "Info"
+    print("Info")
     reg = saldomerval.get(saldomerval.chatid==37307558).get()
-    print reg.username
+    print(reg.username)
 
 # TOKEN
 token = open('TOKEN').read().rstrip('\n')
