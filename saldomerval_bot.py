@@ -59,7 +59,7 @@ def saldo(bot, update):
 
     if int_cardnumber > -1:
         # CONSULTAR
-        r = requests.post("https://www.metro-valparaiso.cl/saldonuevo.php", data={"numerotarjeta": int_cardnumber})
+        r = requests.post("https://www.metrovalparaiso.cl/saldonuevo.php", data={"numerotarjeta": int_cardnumber})
 
         tree = html.fromstring(r.content)
 
